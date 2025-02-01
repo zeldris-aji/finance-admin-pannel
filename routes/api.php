@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\FCustomerController;
+use App\Http\Controllers\Api\FFiscYearController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +21,21 @@ use Illuminate\Support\Facades\Route;
 Route::controller(UserController::class)->group(function () {
     Route::post('login', 'login');
 });
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('v1/rest')->group(function () {
+    Route::group(['middleware' => ['auth:sanctum']], function () {
+        // customer
+        Route::controller(FCustomerController::class)->group(function () {
+            Route::get('customers/search/{page?}', 'search');
+            Route::post('customers/create', 'store');
+            Route::get('customers/fetch/{id}', 'edit');
+            Route::post('customers/update/{id}', 'update');
+        });
+        Route::controller(FFiscYearController::class)->group(function () {
+            Route::get('f-fisc_year/search/{page?}', 'search');
+            Route::post('f-fisc_year/create', 'store');
+            Route::get('f-fisc_year/fetch/{id}', 'edit');
+            Route::post('f-fisc_year/update/{id}', 'update');
+        });
+
+    });
 });
